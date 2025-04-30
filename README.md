@@ -308,3 +308,58 @@ CREATE TABLE applicants (
   FOREIGN KEY (vacancy_id) REFERENCES vacancies(vacancy_id)
 );
 ```
+
+## Server-Side Data Processing and Pagination
+
+The application implements server-side data processing and pagination for efficient data handling. This approach helps manage large datasets by only loading the required data for each page.
+
+### Implementation Details
+
+1. **Pagination Parameters**
+   - `start`: Starting index for the current page
+   - `length`: Number of records to display per page
+   - `draw`: Counter for DataTables to track AJAX requests
+   - `search`: Search parameters for filtering data
+   - `order`: Sorting parameters for the data
+
+2. **Data Processing Features**
+   - **Server-Side Filtering**: Implements search functionality across multiple columns
+   - **Server-Side Sorting**: Supports sorting by any column in ascending or descending order
+   - **Efficient Querying**: Uses optimized SQL queries with proper indexing
+   - **Data Formatting**: Formats data before sending to client (e.g., status text conversion)
+
+3. **Response Format**
+   ```json
+   {
+     "draw": 1,
+     "recordsTotal": 100,
+     "recordsFiltered": 50,
+     "data": [...]
+   }
+   ```
+
+4. **Supported Endpoints**
+   - `/api/candidates` - Candidate data with pagination
+   - `/api/vacancies` - Vacancy data with pagination
+   - `/api/applicants` - Application data with pagination
+
+5. **Performance Optimizations**
+   - Connection pooling for database connections
+   - Parallel query execution for count and data retrieval
+   - Efficient SQL joins for related data
+   - Proper indexing on frequently queried columns
+
+### Example Usage
+
+```javascript
+// Example API call with pagination parameters
+GET /api/candidates?draw=1&start=0&length=10&search[value]=john&order[0][column]=0&order[0][dir]=asc
+```
+
+### Error Handling
+
+The system includes comprehensive error handling for pagination and data processing:
+- Invalid pagination parameters are handled gracefully
+- Search and sort parameters are validated
+- Database errors are caught and returned with appropriate status codes
+- Connection timeouts are handled with proper error messages
